@@ -13,7 +13,10 @@ public enum ErrorCode {
     TOKEN_INVALID(HttpStatus.BAD_REQUEST, "1400", "토큰 형식이 잘못 되었습니다."),
     LOGIN_FAILED(HttpStatus.NOT_FOUND, "1404", "로그인 또는 패스워드가 일치하지 않습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "1404", "해당 사용자를 찾을 수 없습니다."),
-    DELETE_USER_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "1500", "사용자 탈퇴 처리 중 오류가 발생했습니다.");
+    DELETE_USER_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "1500", "사용자 탈퇴 처리 중 오류가 발생했습니다."),
+
+    RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "2404", "해당 레시피를 찾을 수 없습니다."),
+    TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "2404", "해당 태그를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
