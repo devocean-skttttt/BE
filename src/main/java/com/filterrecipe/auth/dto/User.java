@@ -17,6 +17,9 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    private String loginId;
+
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String nickname;
@@ -25,7 +28,8 @@ public class User {
     private String password;
 
     @Builder
-    public User(String email, String nickname, String password) {
+    public User(String loginId, String email, String nickname, String password) {
+        this.loginId = loginId;
         this.email = email;
         this.nickname = nickname;
         this.password = password;
