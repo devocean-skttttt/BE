@@ -1,30 +1,31 @@
 package com.filterrecipe.controller;
 
-import com.filterrecipe.dto.RecipeCreateDTO;
-import com.filterrecipe.model.RecipeCreate;
+import com.filterrecipe.dto.RecipeCreateRequestDto;
+import com.filterrecipe.dto.RecipeCreateResponseDto;
 import com.filterrecipe.service.RecipeCreateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/recipes")
 public class RecipeCreateController {
 
     @Autowired
-    private RecipeCreateService service;
+    private RecipeCreateService recipeCreateService;
 
     @PostMapping
-    public ResponseEntity<RecipeCreate> createRecipe(@RequestBody RecipeCreateDTO dto) {
-        RecipeCreate savedRecipe = service.saveRecipeCreate(dto);
-        return ResponseEntity.ok(savedRecipe);
+    public ResponseEntity<RecipeCreateResponseDto> createRecipe(@RequestBody RecipeCreateRequestDto requestDto) {
+        RecipeCreateResponseDto responseDto = recipeCreateService.createRecipe(requestDto);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RecipeCreate> getRecipeById(@PathVariable Long id) {
-        Optional<RecipeCreate> recipe = service.getRecipeById(id);
-        return recipe.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @PutMapping("/{id}")
+    public ResponseEntity<RecipeCreateResponseDto> updateRecipe(
+            @PathVariable Long id,
+            @RequestBody RecipeCreateRequestDto requestDto) {
+        RecipeCreateResponseDto responseDto = recipeCreateService.updateRecipe(id, requestDto);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 }
