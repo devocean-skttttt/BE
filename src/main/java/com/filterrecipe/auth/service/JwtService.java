@@ -36,7 +36,7 @@ public class JwtService {
 
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-    private static final String LOGIN_ID_CLAIM = "loginId";
+    private static final String ID_CLAIM = "id";
 
     @PostConstruct
     void init() {
@@ -44,11 +44,11 @@ public class JwtService {
         key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String createAccessToken(final String loginId) {
+    public String createAccessToken(final Long userId) {
         log.trace("createAccessToken()");
         Date now = new Date();
         Map<String, Object> userClaim = new HashMap<>();
-        userClaim.put(LOGIN_ID_CLAIM, loginId);
+        userClaim.put(ID_CLAIM, userId);
 
         return Jwts.builder()
                 .setSubject(ACCESS_TOKEN_SUBJECT)
@@ -88,7 +88,7 @@ public class JwtService {
         }
     }
 
-    public Optional<String> extractLoginId(String accessToken) {
+    public Optional<Long> extractId(String accessToken) {
         log.trace("extractId()");
         validateToken(accessToken);
 
@@ -99,8 +99,8 @@ public class JwtService {
                     .parseClaimsJws(accessToken)
                     .getBody();
 
-            String loginId = claims.get(LOGIN_ID_CLAIM, String.class);
-            return loginId != null ? Optional.of(loginId) : Optional.empty();
+            Long id = claims.get(ID_CLAIM, Long.class);
+            return id != null ? Optional.of(id) : Optional.empty();
         } catch (Exception e) {
             throw new IllegalArgumentException("유효하지 엑세스 토큰입니다.");
         }

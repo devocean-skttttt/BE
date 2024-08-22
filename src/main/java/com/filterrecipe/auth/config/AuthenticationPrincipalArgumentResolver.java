@@ -33,10 +33,10 @@ public class AuthenticationPrincipalArgumentResolver implements HandlerMethodArg
         String accessToken = AuthorizationExtractor.extract(request);
 
         jwtService.validateToken(accessToken);
-        String loginId = jwtService.extractLoginId(accessToken).orElseThrow(
+        Long userId = jwtService.extractId(accessToken).orElseThrow(
                 () -> new CustomException(ErrorCode.TOKEN_INVALID)
         );
 
-        return userRepository.getUserByLoginId(loginId);
+        return userRepository.findById(userId);
     }
 }
