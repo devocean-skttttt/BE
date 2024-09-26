@@ -1,5 +1,7 @@
 package com.filterrecipe.dto;
 
+import com.filterrecipe.model.RecipeCreate;
+
 public class RecipeCreateResponseDto {
 
     private Long id;
@@ -23,6 +25,33 @@ public class RecipeCreateResponseDto {
     private int shadows;
     private int blackPoint;
     private int vibrance;
+
+    // 기본 생성자
+    public RecipeCreateResponseDto() {}
+
+    // RecipeCreate 객체를 인자로 받는 생성자
+    public RecipeCreateResponseDto(RecipeCreate recipe) {
+        this.id = recipe.getId();
+        this.title = recipe.getTitle();
+        this.description = recipe.getDescription();
+        this.hashtags = recipe.getHashtags();
+        this.beforeImageUrl = recipe.getBeforeImageUrl();
+        this.afterImageUrl = recipe.getAfterImageUrl();
+        this.exposure = recipe.getExposure();
+        this.brightness = recipe.getBrightness();
+        this.contrast = recipe.getContrast();
+        this.saturation = recipe.getSaturation();
+        this.warmth = recipe.getWarmth();
+        this.tint = recipe.getTint();
+        this.sharpness = recipe.getSharpness();
+        this.clarity = recipe.getClarity();
+        this.noiseReduction = recipe.getNoiseReduction();
+        this.vignette = recipe.getVignette();
+        this.highlights = recipe.getHighlights();
+        this.shadows = recipe.getShadows();
+        this.blackPoint = recipe.getBlackPoint();
+        this.vibrance = recipe.getVibrance();
+    }
 
     // Getters and Setters
     public Long getId() { return id; }
