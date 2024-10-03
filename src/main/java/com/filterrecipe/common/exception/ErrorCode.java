@@ -16,7 +16,7 @@ public enum ErrorCode {
     DELETE_USER_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "1500", "사용자 탈퇴 처리 중 오류가 발생했습니다."),
 
     RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "2404", "해당 레시피를 찾을 수 없습니다."),
-    TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "2404", "해당 태그를 찾을 수 없습니다."),
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "2404", "해당 카테고리를 찾을 수 없습니다."),
 
     ALREADY_BOOKMARKED(HttpStatus.CONFLICT, "3409", "이미 북마크를 했습니다");
 

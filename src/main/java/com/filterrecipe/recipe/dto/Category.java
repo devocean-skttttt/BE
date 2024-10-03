@@ -4,22 +4,17 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "tag")
-public class Tag {
+@Table(name = "category")
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tagId;
+    private Long categoryId;
 
     @Column(nullable = false)
-    private String tagName;
-
-    @ManyToMany(mappedBy = "tags")
-    private Set<Recipe> recipes = new HashSet<>();
+    private String categoryName;
 }

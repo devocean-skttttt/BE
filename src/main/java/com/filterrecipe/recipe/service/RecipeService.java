@@ -5,12 +5,15 @@ import com.filterrecipe.auth.repository.UserRepository;
 import com.filterrecipe.common.exception.CustomException;
 import com.filterrecipe.common.exception.ErrorCode;
 import com.filterrecipe.recipe.dto.Bookmark;
+import com.filterrecipe.recipe.dto.Category;
 import com.filterrecipe.recipe.dto.Recipe;
 import com.filterrecipe.recipe.dto.RecipeDto;
-import com.filterrecipe.recipe.dto.TagDto;
+import com.filterrecipe.recipe.dto.RecipeRequestDto;
+import com.filterrecipe.recipe.dto.CategoryDto;
+import com.filterrecipe.recipe.dto.RecipeResponseDto;
 import com.filterrecipe.recipe.repository.BookmarkRepository;
 import com.filterrecipe.recipe.repository.RecipeRepository;
-import com.filterrecipe.recipe.repository.TagRepository;
+import com.filterrecipe.recipe.repository.CategoryRepository;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +26,26 @@ public class RecipeService {
     private final UserRepository userRepository;
     private final BookmarkRepository bookmarkRepository;
     private final RecipeRepository recipeRepository;
-    private final TagRepository tagRepository;
+    private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
+
+    // 레시피 등록
+    public RecipeDto uploadRecipe(RecipeRequestDto dto) {
+        Recipe recipe = modelMapper.map(dto, Recipe.class);
+
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+
+        recipe.setCategory(category);
+        recipe.setTags(dto.getTags());
+
+        Recipe savedRecipe = recipeRepository.save(recipe);
+
+        RecipeDto response = modelMapper.map(savedRecipe, RecipeDto.class);
+        response.setCategoryName(savedRecipe.getCategory().getCategoryName());
+
+        return response;
+    }
 
     // 레시피 단일 정보 조회
     public RecipeDto getRecipeInfo(Long recipeId) {
@@ -32,34 +53,21 @@ public class RecipeService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RECIPE_NOT_FOUND));
 
         RecipeDto recipeDto = modelMapper.map(recipe, RecipeDto.class);
-
-        Set<TagDto> tagDtos = recipe.getTags().stream().map(tag -> {
-            TagDto tagDto = new TagDto();
-            tagDto.setTagId(tag.getTagId());
-            tagDto.setTagName(tag.getTagName());
-            return tagDto;
-        }).collect(Collectors.toSet());
+        recipeDto.setCategoryName(recipe.getCategory().getCategoryName());
+        recipeDto.setTags(recipe.getTags());
 
         return recipeDto;
     }
 
-    // 태그 별 레시피 목록 조회
-    public Set<RecipeDto> getRecipesByTag(Long tagId) {
-        if (!tagRepository.existsById(tagId)) {
-            throw new CustomException(ErrorCode.TAG_NOT_FOUND);
-        }
-        Set<Recipe> recipes = recipeRepository.findByTagsTagId(tagId)
+    // 카테고리 별 레시피 목록 조회
+    public Set<RecipeDto> getRecipesByCategory(Long categoryId) {
+        Set<Recipe> recipes = recipeRepository.findByCategoryCategoryId(categoryId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RECIPE_NOT_FOUND));
 
         return recipes.stream().map(recipe -> {
             RecipeDto recipeDto = modelMapper.map(recipe, RecipeDto.class);
-
-            Set<TagDto> tagDtos = recipe.getTags().stream().map(tag -> {
-                return modelMapper.map(tag, TagDto.class);
-            }).collect(Collectors.toSet());
-
-            recipeDto.setTags(tagDtos);
-
+            recipeDto.setCategoryName(recipe.getCategory().getCategoryName());
+            recipeDto.setTags(recipe.getTags());
             return recipeDto;
         }).collect(Collectors.toSet());
     }
