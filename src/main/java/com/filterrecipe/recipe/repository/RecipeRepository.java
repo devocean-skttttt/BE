@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
-    Optional<Set<Recipe>> findByTagsTagId(Long tagId);
+    Optional<Set<Recipe>> findByCategoryCategoryId(Long categoryId);
 }
