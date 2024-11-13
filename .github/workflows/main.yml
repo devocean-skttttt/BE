@@ -19,15 +19,6 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # application.yml 파일 생성
-    - name: make application.yml
-      if: contains(github.ref, 'main')
-      run: |
-        cd ./src/main/resources
-        touch ./application.yml
-        echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > ./application.yml
-      shell: bash
-
     # gradle caching - 빌드 시간 향상
     - name: Gradle Caching
       uses: actions/cache@v3
