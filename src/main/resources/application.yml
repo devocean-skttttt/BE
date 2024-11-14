@@ -23,6 +23,12 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 30MB
+      max-request-size: 30MB
+
 jwt:
   secretKey: ${JWT_SECRET_KEY}
   access:

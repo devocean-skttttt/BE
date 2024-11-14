@@ -1,8 +1,6 @@
 package com.filterrecipe.recipe.dto;
 
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +21,9 @@ public class Recipe {
 
     @Column
     private String tags;
+
+    @Column
+    private String imgPath;
 
     @Column
     private Long exposure;

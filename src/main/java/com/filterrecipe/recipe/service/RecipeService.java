@@ -4,33 +4,32 @@ import com.filterrecipe.auth.dto.User;
 import com.filterrecipe.auth.repository.UserRepository;
 import com.filterrecipe.common.exception.CustomException;
 import com.filterrecipe.common.exception.ErrorCode;
-import com.filterrecipe.recipe.dto.Bookmark;
-import com.filterrecipe.recipe.dto.Category;
-import com.filterrecipe.recipe.dto.Recipe;
-import com.filterrecipe.recipe.dto.RecipeDto;
-import com.filterrecipe.recipe.dto.RecipeRequestDto;
-import com.filterrecipe.recipe.dto.CategoryDto;
-import com.filterrecipe.recipe.dto.RecipeResponseDto;
-import com.filterrecipe.recipe.repository.BookmarkRepository;
-import com.filterrecipe.recipe.repository.RecipeRepository;
-import com.filterrecipe.recipe.repository.CategoryRepository;
+import com.filterrecipe.recipe.dto.*;
+import com.filterrecipe.recipe.repository.*;
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RecipeService {
     private final UserRepository userRepository;
     private final BookmarkRepository bookmarkRepository;
     private final RecipeRepository recipeRepository;
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
+    private final Path rootLocation = Paths.get("uploads");
 
     // 레시피 등록
-    public RecipeDto uploadRecipe(RecipeRequestDto dto) {
+    public RecipeDto uploadRecipe(RecipeRequestDto dto, MultipartFile img) throws IOException {
         Recipe recipe = modelMapper.map(dto, Recipe.class);
 
         Category category = categoryRepository.findById(dto.getCategoryId())
@@ -38,6 +37,28 @@ public class RecipeService {
 
         recipe.setCategory(category);
         recipe.setTags(dto.getTags());
+
+        if (img != null && !img.isEmpty()) {
+            if (Files.notExists(rootLocation)) {
+                Files.createDirectories(rootLocation);
+            }
+
+            log.info("aaa");
+
+            // 고유한 파일 이름 생성 (UUID 활용)
+            String originalFilename = img.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String uniqueFilename = UUID.randomUUID().toString() + extension;
+
+            log.info("bbb");
+            // 파일 저장 경로 설정
+            Path destFile = rootLocation.resolve(Paths.get(uniqueFilename)).normalize().toAbsolutePath();
+            Files.copy(img.getInputStream(), destFile, StandardCopyOption.REPLACE_EXISTING);
+
+            log.info("ccc");
+            // 이미지 파일 경로를 엔티티에 설정
+            recipe.setImgPath("/uploads/" + uniqueFilename);
+        }
 
         Recipe savedRecipe = recipeRepository.save(recipe);
 

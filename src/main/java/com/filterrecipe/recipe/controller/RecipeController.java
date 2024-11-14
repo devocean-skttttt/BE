@@ -1,10 +1,12 @@
 package com.filterrecipe.recipe.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.filterrecipe.common.util.ApiResponse;
 import com.filterrecipe.recipe.dto.RecipeDto;
 import com.filterrecipe.recipe.dto.RecipeRequestDto;
 import com.filterrecipe.recipe.dto.RecipeResponseDto;
 import com.filterrecipe.recipe.service.RecipeService;
+import java.io.IOException;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,17 +17,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/recipe")
 public class RecipeController {
     private final RecipeService recipeService;
+    private final ObjectMapper objectMapper;
 
     // 레시피 등록
     @PostMapping("/")
-    public ResponseEntity<ApiResponse<RecipeDto>> uploadRecipe(@RequestBody RecipeRequestDto dto) {
-        RecipeDto response = recipeService.uploadRecipe(dto);
+    public ResponseEntity<ApiResponse<RecipeDto>> uploadRecipe(@RequestParam(value = "data") String dto,
+                                                               @RequestParam(value = "image") MultipartFile img)
+            throws IOException {
+
+        RecipeRequestDto recipeRequestDto = objectMapper.readValue(dto, RecipeRequestDto.class);
+        
+        RecipeDto response = recipeService.uploadRecipe(recipeRequestDto, img);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
