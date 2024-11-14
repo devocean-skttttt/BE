@@ -11,6 +11,7 @@ public class RecipeDto {
     private Long recipeId;
     private String categoryName;
     private String tags;
+    private String imgPath;
     private Long exposure;
     private Long brilliance;
     private Long highlights;
